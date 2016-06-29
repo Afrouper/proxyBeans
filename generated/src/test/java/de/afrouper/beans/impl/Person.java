@@ -1,6 +1,7 @@
 package de.afrouper.beans.impl;
 
 import de.afrouper.beans.Bean;
+import de.afrouper.beans.BeanList;
 
 public interface Person extends Bean {
 
@@ -17,4 +18,8 @@ public interface Person extends Bean {
 	Person getPartner();
 
 	void setPartner(Person person);
+
+	BeanList<Person> getChilds();
+
+	void setChilds(BeanList<Person> childs);
 }
