@@ -6,54 +6,47 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class GeneratedBeanInvocationHandler implements InvocationHandler {
+public class BeanInvocationHandler extends AbstractInvocationHandler {
 
 	private final Map<String, BeanValue> values;
-	private final GeneratedBeanDescription beanDescription;
+	private final BeanDescription beanDescription;
 
-	public GeneratedBeanInvocationHandler(GeneratedBeanDescription beanDescription) {
+	public BeanInvocationHandler(BeanDescription beanDescription) {
 		this.beanDescription = beanDescription;
 		values = new ConcurrentHashMap<>();
 	}
 
 	@Override
-	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		String methodName = method.getName();
-		switch (methodName) {
-		case "hashCode":
-			return hashCodeImpl();
-		case "equals":
-			return equalsImpl(args[0]);
-		case "toString":
-			return toStringImpl();
-		default:
-			return handleBeanMethod(methodName, args);
-		}
+	protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
+		return handleBeanMethod(method.getName(), args);
 	}
 
-	private int hashCodeImpl() {
+	@Override
+	public int hashCode() {
 		return values.hashCode();
 	}
 
-	private Object equalsImpl(Object object) {
+	@Override
+	public boolean equals(Object object) {
 		if (object == null) {
 			return false;
 		}
-		if(!Proxy.isProxyClass(object.getClass())) {
+		if (!Proxy.isProxyClass(object.getClass())) {
 			return false;
 		}
 		InvocationHandler invocationHandler = Proxy.getInvocationHandler(object);
-		if (!GeneratedBeanInvocationHandler.class.isAssignableFrom(invocationHandler.getClass())) {
+		if (!BeanInvocationHandler.class.isAssignableFrom(invocationHandler.getClass())) {
 			return false;
 		}
-		GeneratedBeanInvocationHandler other = (GeneratedBeanInvocationHandler) invocationHandler;
+		BeanInvocationHandler other = (BeanInvocationHandler) invocationHandler;
 		if (!beanDescription.getBeanClass().equals(other.beanDescription.getBeanClass())) {
 			return false;
 		}
 		return values.equals(other.values);
 	}
 
-	private String toStringImpl() {
+	@Override
+	public String toString() {
 		return beanDescription.getBeanClass().getName() + " - " + values.toString();
 	}
 
@@ -90,8 +83,7 @@ public class GeneratedBeanInvocationHandler implements InvocationHandler {
 			} else {
 				value.setValue(object);
 			}
-		}
-		else {
+		} else {
 			throw new IllegalArgumentException("Cannot access property " + propertyName + ". WriteMethodName is null.");
 		}
 	}

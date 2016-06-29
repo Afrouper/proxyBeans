@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.afrouper.beans.GeneratedBean;
+import de.afrouper.beans.Bean;
 
-public final class GeneratedBeanDescription implements Serializable {
+public final class BeanDescription implements Serializable {
 
 	private static final long serialVersionUID = -1565943889462348220L;
 
@@ -14,9 +14,9 @@ public final class GeneratedBeanDescription implements Serializable {
 
 	private final Map<String, BeanProperty> properties;
 
-	private final Class<? extends GeneratedBean> beanClass;
+	private final Class<? extends Bean> beanClass;
 
-	public GeneratedBeanDescription(Class<? extends GeneratedBean> beanClass, String name) {
+	public BeanDescription(Class<? extends Bean> beanClass, String name) {
 		this.beanClass = beanClass;
 		this.name = name;
 		properties = new HashMap<>();
@@ -26,7 +26,7 @@ public final class GeneratedBeanDescription implements Serializable {
 		return name;
 	}
 
-	public Class<? extends GeneratedBean> getBeanClass() {
+	public Class<? extends Bean> getBeanClass() {
 		return beanClass;
 	}
 

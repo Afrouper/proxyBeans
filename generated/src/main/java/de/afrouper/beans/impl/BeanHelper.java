@@ -1,8 +1,8 @@
 package de.afrouper.beans.impl;
 
-final class GeneratedBeanHelper {
+final class BeanHelper {
 
-	private GeneratedBeanHelper() {
+	private BeanHelper() {
 	}
 
 	public static boolean isValidProperty(String propertyName) {
