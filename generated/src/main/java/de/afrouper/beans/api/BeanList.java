@@ -1,4 +1,4 @@
-package de.afrouper.beans;
+package de.afrouper.beans.api;
 
 import java.util.List;
 

@@ -3,7 +3,7 @@ package de.afrouper.beans.impl;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.afrouper.beans.BeanList;
+import de.afrouper.beans.api.BeanList;
 
 public class BeanListTest {
 

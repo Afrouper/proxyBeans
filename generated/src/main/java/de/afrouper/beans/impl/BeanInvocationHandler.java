@@ -3,22 +3,41 @@ package de.afrouper.beans.impl;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class BeanInvocationHandler extends AbstractInvocationHandler {
+import de.afrouper.beans.api.ext.BeanAccess;
+import de.afrouper.beans.api.ext.BeanVisitor;
+
+public class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAccess {
 
 	private final Map<String, BeanValue> values;
+
 	private final BeanDescription beanDescription;
+
+	private final Set<String> changedProperties;
 
 	public BeanInvocationHandler(BeanDescription beanDescription) {
 		this.beanDescription = beanDescription;
 		values = new ConcurrentHashMap<>();
+		changedProperties = Collections.synchronizedSet(new HashSet<>());
 	}
 
 	@Override
 	protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
 		return handleBeanMethod(method.getName(), args);
+	}
+
+	@Override
+	public void resetTrackedChanges() {
+		changedProperties.clear();
+	}
+
+	@Override
+	public void visit(BeanVisitor visitor, boolean onlyChangedProperties) {
 	}
 
 	@Override
@@ -51,11 +70,11 @@ public class BeanInvocationHandler extends AbstractInvocationHandler {
 	}
 
 	private Object handleBeanMethod(String methodName, Object[] args) {
-		if (JavaBeanUtil.isSetterMethod(methodName)) {
-			setValue(JavaBeanUtil.getPropertyNameFromMethodName(methodName), args[0]);
+		if (BeanUtil.isSetterMethod(methodName)) {
+			setValue(BeanUtil.getPropertyNameFromMethodName(methodName), args[0]);
 			return null;
-		} else if (JavaBeanUtil.isGetterMethod(methodName)) {
-			return getValue(JavaBeanUtil.getPropertyNameFromMethodName(methodName)).getValue();
+		} else if (BeanUtil.isGetterMethod(methodName)) {
+			return getValue(BeanUtil.getPropertyNameFromMethodName(methodName)).getValue();
 		}
 		throw new IllegalArgumentException("Method " + methodName + " cannot be invoked.");
 	}
@@ -80,12 +99,21 @@ public class BeanInvocationHandler extends AbstractInvocationHandler {
 			if (value == null) {
 				value = new BeanValue(object);
 				values.put(propertyName, value);
-			} else {
+				changedProperties.add(propertyName);
+			} else if (valueChanged(value.getValue(), object)) {
 				value.setValue(object);
+				changedProperties.add(propertyName);
 			}
 		} else {
 			throw new IllegalArgumentException("Cannot access property " + propertyName + ". WriteMethodName is null.");
 		}
 	}
 
+	private boolean valueChanged(Object oldValue, Object newValue) {
+		if (oldValue != null) {
+			return !oldValue.equals(newValue);
+		} else {
+			return newValue != null;
+		}
+	}
 }

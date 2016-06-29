@@ -2,10 +2,22 @@ package de.afrouper.beans.impl;
 
 import java.beans.Introspector;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
-public final class JavaBeanUtil {
+import de.afrouper.beans.api.Bean;
+import de.afrouper.beans.api.ext.BeanAccess;
 
-	private JavaBeanUtil() {
+public final class BeanUtil {
+
+	private BeanUtil() {
+	}
+
+	public static BeanAccess getBeanAccess(Object object) {
+		if (object instanceof Bean) {
+			return (BeanAccess) Proxy.getInvocationHandler(object);
+		} else {
+			return null;
+		}
 	}
 
 	public static boolean isGetterMethod(Method method) {

@@ -1,6 +1,7 @@
 package de.afrouper.beans.impl;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 
 public final class BeanProperty implements Serializable {
 
@@ -12,12 +13,21 @@ public final class BeanProperty implements Serializable {
 
 	private String writeMethodName;
 
-	public BeanProperty(String name) {
+	private Annotation[] annotations;
+
+	private boolean trackChanges;
+
+	public BeanProperty(String name, boolean trackChanges) {
 		this.name = name;
+		this.trackChanges = trackChanges;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean isTrackChanges() {
+		return trackChanges;
 	}
 
 	@Override
@@ -39,5 +49,13 @@ public final class BeanProperty implements Serializable {
 
 	public String getWriteMethodName() {
 		return writeMethodName;
+	}
+
+	public void setAnnotations(Annotation[] annotations) {
+		this.annotations = annotations;
+	}
+
+	public Annotation[] getAnnotations() {
+		return annotations;
 	}
 }

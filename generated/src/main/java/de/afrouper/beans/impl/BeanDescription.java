@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.afrouper.beans.Bean;
+import de.afrouper.beans.api.Bean;
+import de.afrouper.beans.api.NoChangeTracking;
 
 public final class BeanDescription implements Serializable {
 
@@ -16,8 +17,11 @@ public final class BeanDescription implements Serializable {
 
 	private final Class<? extends Bean> beanClass;
 
+	private final boolean trackChanges;
+
 	public BeanDescription(Class<? extends Bean> beanClass, String name) {
 		this.beanClass = beanClass;
+		this.trackChanges = beanClass.isAnnotationPresent(NoChangeTracking.class);
 		this.name = name;
 		properties = new HashMap<>();
 	}
@@ -28,6 +32,10 @@ public final class BeanDescription implements Serializable {
 
 	public Class<? extends Bean> getBeanClass() {
 		return beanClass;
+	}
+
+	public boolean isTrackChanges() {
+		return trackChanges;
 	}
 
 	public BeanProperty getProperty(String propertyName) {

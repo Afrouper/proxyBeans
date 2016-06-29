@@ -1,7 +1,7 @@
 package de.afrouper.beans.impl;
 
-import de.afrouper.beans.Bean;
-import de.afrouper.beans.BeanList;
+import de.afrouper.beans.api.Bean;
+import de.afrouper.beans.api.BeanList;
 
 public interface Person extends Bean {
 

@@ -3,12 +3,14 @@ package de.afrouper.beans.impl;
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
-import de.afrouper.beans.Bean;
+import de.afrouper.beans.api.Bean;
+import de.afrouper.beans.api.NoChangeTracking;
 
 public class BeanScanner {
 
@@ -36,8 +38,7 @@ public class BeanScanner {
 	private BeanDescription createBeanDescription(Class<? extends Bean> beanClass) {
 		try {
 			BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);
-			BeanDescription description = new BeanDescription(beanClass,
-					beanInfo.getBeanDescriptor().getName());
+			BeanDescription description = new BeanDescription(beanClass, beanInfo.getBeanDescriptor().getName());
 			for (PropertyDescriptor property : beanInfo.getPropertyDescriptors()) {
 				if (BeanHelper.isValidProperty(property.getName())) {
 					handlePropertyDescriptor(description, property);
@@ -51,10 +52,26 @@ public class BeanScanner {
 	}
 
 	private void handlePropertyDescriptor(BeanDescription description, PropertyDescriptor property) {
-		BeanProperty beanProperty = new BeanProperty(property.getName());
-		checkAndInvoke(property.getReadMethod(), beanProperty::setReadMethodName);
-		checkAndInvoke(property.getWriteMethod(), beanProperty::setWriteMethodName);
+		Method readMethod = property.getReadMethod();
+		Method writeMethod = property.getWriteMethod();
+
+		boolean trackChanges = hasAnnotation(readMethod, NoChangeTracking.class);
+
+		BeanProperty beanProperty = new BeanProperty(property.getName(), trackChanges);
+		checkAndInvoke(readMethod, beanProperty::setReadMethodName);
+		checkAndInvoke(writeMethod, beanProperty::setWriteMethodName);
+		if (readMethod != null) {
+			beanProperty.setAnnotations(readMethod.getAnnotations());
+		}
 		description.addBeanProperty(beanProperty);
+	}
+
+	private boolean hasAnnotation(Method method, Class<? extends Annotation> annotation) {
+		if (method != null) {
+			return method.isAnnotationPresent(annotation);
+		} else {
+			return false;
+		}
 	}
 
 	private void checkAndInvoke(Method method, Consumer<String> consumer) {

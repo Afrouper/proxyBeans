@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.afrouper.beans.Bean;
+import de.afrouper.beans.api.Bean;
 
 public class BeanListInvocationHandler<E extends Bean> extends AbstractInvocationHandler {
 
