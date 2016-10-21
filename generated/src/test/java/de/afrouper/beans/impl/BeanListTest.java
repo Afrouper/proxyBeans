@@ -1,5 +1,6 @@
 package de.afrouper.beans.impl;
 
+import de.afrouper.beans.api.BeanFactory;
 import org.junit.Assert;
 import org.junit.Test;
 

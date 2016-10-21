@@ -12,11 +12,11 @@ final class BeanValue implements Serializable {
 		this.value = value;
 	}
 
-	public Object getValue() {
+	Object getValue() {
 		return value;
 	}
 
-	public void setValue(Object value) {
+	void setValue(Object value) {
 		this.value = value;
 	}
 

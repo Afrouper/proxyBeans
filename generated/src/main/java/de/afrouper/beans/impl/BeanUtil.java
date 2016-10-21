@@ -7,12 +7,12 @@ import java.lang.reflect.Proxy;
 import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.ext.BeanAccess;
 
-public final class BeanUtil {
+final class BeanUtil {
 
 	private BeanUtil() {
 	}
 
-	public static BeanAccess getBeanAccess(Object object) {
+	static BeanAccess getBeanAccess(Object object) {
 		if (object instanceof Bean) {
 			return (BeanAccess) Proxy.getInvocationHandler(object);
 		} else {
@@ -20,7 +20,7 @@ public final class BeanUtil {
 		}
 	}
 
-	public static boolean isGetterMethod(Method method) {
+	static boolean isGetterMethod(Method method) {
 		if (method == null) {
 			return false;
 		} else {
@@ -28,7 +28,7 @@ public final class BeanUtil {
 		}
 	}
 
-	public static boolean isSetterMethod(Method method) {
+	static boolean isSetterMethod(Method method) {
 		if (method == null) {
 			return false;
 		} else {
@@ -36,7 +36,7 @@ public final class BeanUtil {
 		}
 	}
 
-	public static boolean isSetterMethod(String name) {
+	static boolean isSetterMethod(String name) {
 		if (name == null) {
 			return false;
 		} else {
@@ -44,7 +44,7 @@ public final class BeanUtil {
 		}
 	}
 
-	public static boolean isGetterMethod(String name) {
+	static boolean isGetterMethod(String name) {
 		if (name == null) {
 			return false;
 		} else {
@@ -52,7 +52,7 @@ public final class BeanUtil {
 		}
 	}
 
-	public static String getPropertyNameFromMethodName(String methodName) {
+	static String getPropertyNameFromMethodName(String methodName) {
 		if (methodName == null) {
 			return null;
 		}

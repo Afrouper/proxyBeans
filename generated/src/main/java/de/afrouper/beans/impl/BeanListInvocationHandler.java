@@ -6,11 +6,11 @@ import java.util.List;
 
 import de.afrouper.beans.api.Bean;
 
-public class BeanListInvocationHandler<E extends Bean> extends AbstractInvocationHandler {
+class BeanListInvocationHandler<E extends Bean> extends AbstractInvocationHandler {
 
 	private final List<E> realList;
 
-	public BeanListInvocationHandler(BeanDescription description, Class<E> elementType) {
+	BeanListInvocationHandler(BeanDescription description, Class<E> elementType) {
 		this.realList = new ArrayList<>();
 	}
 

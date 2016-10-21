@@ -5,11 +5,11 @@ final class BeanHelper {
 	private BeanHelper() {
 	}
 
-	public static boolean isValidProperty(String propertyName) {
+	static boolean isValidProperty(String propertyName) {
 		return true;
 	}
 
-	public static boolean isValidMethod(String methodName) {
+	static boolean isValidMethod(String methodName) {
 		return true;
 	}
 }

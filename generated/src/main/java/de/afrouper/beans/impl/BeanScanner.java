@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.NoChangeTracking;
 
-public class BeanScanner {
+final class BeanScanner {
 
 	private static final BeanScanner ref = new BeanScanner();
 
@@ -22,7 +22,7 @@ public class BeanScanner {
 		scannedBeans = new ConcurrentHashMap<>();
 	}
 
-	public static BeanScanner get() {
+	static BeanScanner get() {
 		return ref;
 	}
 

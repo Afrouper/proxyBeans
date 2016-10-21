@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.afrouper.beans.api.ext.BeanAccess;
 import de.afrouper.beans.api.ext.BeanVisitor;
 
-public class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAccess {
+class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAccess {
 
 	private final Map<String, BeanValue> values;
 
@@ -20,7 +20,7 @@ public class BeanInvocationHandler extends AbstractInvocationHandler implements 
 
 	private final Set<String> changedProperties;
 
-	public BeanInvocationHandler(BeanDescription beanDescription) {
+	BeanInvocationHandler(BeanDescription beanDescription) {
 		this.beanDescription = beanDescription;
 		values = new ConcurrentHashMap<>();
 		changedProperties = Collections.synchronizedSet(new HashSet<>());
