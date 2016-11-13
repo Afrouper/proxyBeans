@@ -32,7 +32,7 @@ final class BeanProperty implements Serializable {
 
 	@Override
 	public String toString() {
-		return "BeanProperty [name=" + name + "]";
+		return "BeanProperty '" + name + "'";
 	}
 
 	void setReadMethodName(String readMethodName) {
