@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 /**
- *
+ * Factory for creating instances of {@link Bean}s
  */
 public final class BeanFactory {
 
@@ -27,10 +27,20 @@ public final class BeanFactory {
         return beanFactoryDelegate;
     }
 
+    /**
+     * Creates a {@link Bean} instance
+     * @param clazz {@link Class} defining the bean
+     * @return Instance of the given interface class
+     */
     public static <B extends Bean> B createBean(Class<B> clazz) {
         return delegate.createBean(clazz);
     }
 
+    /**
+     * Creates a new instance of a {@link BeanList}
+     * @param elementType Type of objects which can be stored in the list
+     * @return Instance of the list
+     */
     public static <B extends Bean> BeanList<B> createBeanList(Class<B> elementType) {
         return delegate.createBeanList(elementType);
     }
