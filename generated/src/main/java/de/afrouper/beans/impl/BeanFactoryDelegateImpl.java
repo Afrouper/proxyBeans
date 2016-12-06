@@ -21,8 +21,7 @@ public final class BeanFactoryDelegateImpl implements BeanFactoryDelegate {
 	@SuppressWarnings("unchecked")
 	public <E extends Bean> BeanList<E> createBeanList(Class<E> elementType) {
 		BeanDescription description = BeanScanner.get().getBeanDescription(elementType);
-		return (BeanList<E>) Proxy.newProxyInstance(getClassloader(), new Class[] { BeanList.class },
-				new BeanListInvocationHandler<E>(description, elementType));
+		return new DelegatingList<>(elementType, description);
 	}
 
 	private static ClassLoader getClassloader() {
