@@ -1,8 +1,8 @@
 package de.afrouper.beans.api.ext;
 
-import java.lang.annotation.Annotation;
-
 import de.afrouper.beans.api.Bean;
+
+import java.lang.annotation.Annotation;
 
 public interface BeanVisitor {
 
@@ -13,6 +13,8 @@ public interface BeanVisitor {
 	void beanEnd(String name);
 
 	void listStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations);
+
+	void listIndex(int index);
 
 	void listEnd(String name);
 }

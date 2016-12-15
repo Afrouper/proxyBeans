@@ -34,6 +34,13 @@ public class BeanTest {
 		Assert.assertEquals(58, person.getPartner().getAge().intValue());
 		Assert.assertNotEquals(person.getAge(), person.getPartner().getAge());
 		Assert.assertEquals(partner.getName(), person.getPartner().getName());
+	}
 
+	@Test
+	public void defaultMethod() {
+		Person person = BeanFactory.createBean(Person.class);
+		person.setName("Lutz");
+		person.setAge(42);
+		Assert.assertEquals("Lutz is 42", person.nameAge());
 	}
 }

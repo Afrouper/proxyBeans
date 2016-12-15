@@ -1,6 +1,8 @@
 package de.afrouper.beans.api.ext;
 
-public interface BeanAccess {
+import de.afrouper.beans.api.Bean;
+
+public interface BeanAccess<B extends Bean> {
 
 	void visit(BeanVisitor visitor, boolean onlyChangedProperties);
 

@@ -3,11 +3,12 @@ package de.afrouper.beans.impl;
 
 import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.BeanList;
+import de.afrouper.beans.api.ext.BeanVisitor;
 
 import java.io.Serializable;
 import java.util.*;
 
-final class DelegatingList<E extends Bean> implements BeanList<E>, Serializable {
+final class DelegatingList<E extends Bean> implements BeanList<E>, BeanImpl<E>, Serializable {
 
     private final ArrayList<E> list;
 
@@ -37,7 +38,36 @@ final class DelegatingList<E extends Bean> implements BeanList<E>, Serializable 
 
     }
 
-    //------------ List Methods
+    Class<E> getElementType() {
+        return elementType;
+    }
+
+    @Override
+    public void visit(BeanVisitor visitor, boolean onlyChangedProperties) {
+        //TODO: Implement change tracking
+		for (int i = 0; i < list.size(); i++) {
+			visitor.listIndex(i);
+			BeanImpl beanImpl = BeanUtil.getBeanImpl(list.get(i));
+			beanImpl.visit(visitor, onlyChangedProperties);
+		}
+	}
+
+    @Override
+    public void resetTrackedChanges() {
+
+    }
+
+	@Override
+	public void addBeanListener(BeanListener listener) {
+
+	}
+
+	@Override
+	public void removeBeanListener(BeanListener listener) {
+
+	}
+
+	//------------ List Methods
 
     @Override
     public int size() {

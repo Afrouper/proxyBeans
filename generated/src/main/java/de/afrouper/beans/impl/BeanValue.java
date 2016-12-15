@@ -8,6 +8,8 @@ final class BeanValue implements Serializable {
 
 	private Object value;
 
+	private BeanListener listener;
+
 	BeanValue(Object value) {
 		this.value = value;
 	}
@@ -18,6 +20,14 @@ final class BeanValue implements Serializable {
 
 	void setValue(Object value) {
 		this.value = value;
+	}
+
+	void setListener(BeanListener listener) {
+		this.listener = listener;
+	}
+
+	BeanListener getListener() {
+		return listener;
 	}
 
 	@Override
@@ -52,5 +62,5 @@ final class BeanValue implements Serializable {
 
 	public String toString() {
 		return value != null ? value.toString() : "null";
-	};
+	}
 }

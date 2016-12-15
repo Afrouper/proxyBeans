@@ -3,6 +3,7 @@ package de.afrouper.beans.impl;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.NoChangeTracking;
@@ -44,5 +45,9 @@ final class BeanDescription implements Serializable {
 
 	void addBeanProperty(BeanProperty property) {
 		properties.put(property.getName(), property);
+	}
+
+	Set<String> getBeanProperties() {
+		return properties.keySet();
 	}
 }

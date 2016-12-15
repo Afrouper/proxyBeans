@@ -1,5 +1,8 @@
 package de.afrouper.beans.impl;
 
+import de.afrouper.beans.api.Bean;
+import de.afrouper.beans.api.NoChangeTracking;
+
 import java.beans.BeanInfo;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
@@ -8,9 +11,6 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
-
-import de.afrouper.beans.api.Bean;
-import de.afrouper.beans.api.NoChangeTracking;
 
 final class BeanScanner {
 
@@ -57,7 +57,7 @@ final class BeanScanner {
 
 		boolean trackChanges = hasAnnotation(readMethod, NoChangeTracking.class);
 
-		BeanProperty beanProperty = new BeanProperty(property.getName(), trackChanges);
+		BeanProperty beanProperty = new BeanProperty(property.getName(), property.getPropertyType(), trackChanges);
 		checkAndInvoke(readMethod, beanProperty::setReadMethodName);
 		checkAndInvoke(writeMethod, beanProperty::setWriteMethodName);
 		if (readMethod != null) {

@@ -15,10 +15,13 @@ final class BeanProperty implements Serializable {
 
 	private Annotation[] annotations;
 
+	private final Class<?> type;
+
 	private boolean trackChanges;
 
-	BeanProperty(String name, boolean trackChanges) {
+	BeanProperty(String name, Class<?> type, boolean trackChanges) {
 		this.name = name;
+		this.type = type;
 		this.trackChanges = trackChanges;
 	}
 
@@ -28,6 +31,10 @@ final class BeanProperty implements Serializable {
 
 	boolean isTrackChanges() {
 		return trackChanges;
+	}
+
+	Class<?> getType() {
+		return type;
 	}
 
 	@Override

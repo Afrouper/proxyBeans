@@ -1,18 +1,15 @@
 package de.afrouper.beans.impl;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.ext.BeanAccess;
 import de.afrouper.beans.api.ext.BeanVisitor;
 
-class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAccess {
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+class BeanInvocationHandler extends AbstractInvocationHandler implements BeanImpl, BeanAccess {
 
 	private final Map<String, BeanValue> values;
 
@@ -20,15 +17,18 @@ class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAcc
 
 	private final Set<String> changedProperties;
 
+	private final List<BeanListener> listeners;
+
 	BeanInvocationHandler(BeanDescription beanDescription) {
 		this.beanDescription = beanDescription;
 		values = new ConcurrentHashMap<>();
 		changedProperties = Collections.synchronizedSet(new HashSet<>());
+		listeners = new ArrayList<>();
 	}
 
 	@Override
 	protected Object invokeMethod(Object proxy, Method method, Object[] args) throws Throwable {
-		return handleBeanMethod(method.getName(), args);
+		return handleBeanMethod(proxy, method, args);
 	}
 
 	@Override
@@ -38,6 +38,45 @@ class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAcc
 
 	@Override
 	public void visit(BeanVisitor visitor, boolean onlyChangedProperties) {
+		Set<String> elements;
+		if (onlyChangedProperties) {
+			elements = changedProperties;
+		} else {
+			elements = beanDescription.getBeanProperties();
+		}
+
+		for (String propertyName : elements) {
+			BeanValue value = values.get(propertyName);
+			BeanProperty beanProperty = beanDescription.getProperty(propertyName);
+			if (value != null) {
+				BeanImpl impl = BeanUtil.getBeanImpl(value.getValue());
+				if (impl != null) {
+					if (Bean.class.isInstance(value.getValue())) {
+						visitor.beanStart(propertyName, (Class<? extends Bean>) beanProperty.getType(), beanProperty.getAnnotations());
+						impl.visit(visitor, onlyChangedProperties);
+						visitor.beanEnd(propertyName);
+					} else {
+						//must be a list
+						DelegatingList list = (DelegatingList) value.getValue();
+						visitor.listStart(propertyName, list.getElementType(), beanProperty.getAnnotations());
+						impl.visit(visitor, onlyChangedProperties);
+						visitor.listEnd(propertyName);
+					}
+				} else {
+					visitor.property(propertyName, value.getValue(), beanProperty.getType(), beanProperty.getAnnotations());
+				}
+			}
+		}
+	}
+
+	@Override
+	public void addBeanListener(BeanListener listener) {
+		listeners.add(listener);
+	}
+
+	@Override
+	public void removeBeanListener(BeanListener listener) {
+		listeners.remove(listener);
 	}
 
 	@Override
@@ -69,12 +108,33 @@ class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAcc
 		return beanDescription.getBeanClass().getName() + " - " + values.toString();
 	}
 
-	private Object handleBeanMethod(String methodName, Object[] args) {
+	private Object handleBeanMethod(Object proxy, Method method, Object[] args) throws Throwable {
+		String methodName = method.getName();
 		if (BeanUtil.isSetterMethod(methodName)) {
 			setValue(BeanUtil.getPropertyNameFromMethodName(methodName), args[0]);
 			return null;
 		} else if (BeanUtil.isGetterMethod(methodName)) {
 			return getValue(BeanUtil.getPropertyNameFromMethodName(methodName)).getValue();
+		} else if (method.isDefault()) {
+			final Class<?> declaringClass = method.getDeclaringClass();
+			final MethodHandles.Lookup lookup = MethodHandles.publicLookup()
+					.in(declaringClass);
+
+			final Field f = MethodHandles.Lookup.class.getDeclaredField("allowedModes");
+			final int modifiers = f.getModifiers();
+			if (Modifier.isFinal(modifiers)) {
+				//TODO: DO if-block only once!
+				final Field modifiersField = Field.class.getDeclaredField("modifiers");
+				modifiersField.setAccessible(true);
+				modifiersField.setInt(f, modifiers & ~Modifier.FINAL);
+				f.setAccessible(true);
+				f.set(lookup, MethodHandles.Lookup.PRIVATE);
+			}
+
+			return lookup
+					.unreflectSpecial(method, declaringClass)
+					.bindTo(proxy)
+					.invokeWithArguments(args);
 		}
 		throw new IllegalArgumentException("Method " + methodName + " cannot be invoked.");
 	}
@@ -98,10 +158,12 @@ class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAcc
 			BeanValue value = values.get(propertyName);
 			if (value == null) {
 				value = new BeanValue(object);
+				checkAndAddListener(value, property, null);
 				values.put(propertyName, value);
 				changedProperties.add(propertyName);
-			} else if (valueChanged(value.getValue(), object)) {
+			} else if (isValueChanged(value.getValue(), object)) {
 				value.setValue(object);
+				checkAndAddListener(value, property, value.getValue());
 				changedProperties.add(propertyName);
 			}
 		} else {
@@ -109,7 +171,25 @@ class BeanInvocationHandler extends AbstractInvocationHandler implements BeanAcc
 		}
 	}
 
-	private boolean valueChanged(Object oldValue, Object newValue) {
+	private void checkAndAddListener(BeanValue beanValue, BeanProperty property, Object oldValue) {
+		BeanImpl beanImpl = BeanUtil.getBeanImpl(beanValue.getValue());
+		if (beanImpl != null) {
+			BeanListener oldListener = beanValue.getListener();
+			if (oldListener != null) {
+				BeanUtil.getBeanImpl(oldValue).removeBeanListener(oldListener);
+				beanImpl.addBeanListener(oldListener);
+			} else {
+				beanValue.setListener(() -> childChanged(property));
+				beanImpl.addBeanListener(beanValue.getListener());
+			}
+		}
+	}
+
+	private void childChanged(BeanProperty property) {
+		changedProperties.add(property.getName());
+	}
+
+	private boolean isValueChanged(Object oldValue, Object newValue) {
 		if (oldValue != null) {
 			return !oldValue.equals(newValue);
 		} else {

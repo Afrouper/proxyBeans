@@ -1,23 +1,55 @@
 package de.afrouper.beans.impl;
 
+import de.afrouper.beans.api.Bean;
+
 import java.beans.Introspector;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-
-import de.afrouper.beans.api.Bean;
-import de.afrouper.beans.api.ext.BeanAccess;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.Set;
 
 final class BeanUtil {
+
+	private static final Set<Class<?>> primitiveTypes = new HashSet<>();
+
+	static {
+		primitiveTypes.add(short.class);
+		primitiveTypes.add(int.class);
+		primitiveTypes.add(long.class);
+		primitiveTypes.add(float.class);
+		primitiveTypes.add(double.class);
+		primitiveTypes.add(char.class);
+		primitiveTypes.add(boolean.class);
+
+		primitiveTypes.add(BigInteger.class);
+		primitiveTypes.add(BigDecimal.class);
+		primitiveTypes.add(String.class);
+
+		primitiveTypes.add(Short.class);
+		primitiveTypes.add(Integer.class);
+		primitiveTypes.add(Long.class);
+		primitiveTypes.add(Float.class);
+		primitiveTypes.add(Double.class);
+		primitiveTypes.add(Character.class);
+		primitiveTypes.add(Boolean.class);
+	}
 
 	private BeanUtil() {
 	}
 
-	static BeanAccess getBeanAccess(Object object) {
-		if (object instanceof Bean) {
-			return (BeanAccess) Proxy.getInvocationHandler(object);
-		} else {
+	static BeanImpl getBeanImpl(Object obj) {
+		if(obj == null) {
 			return null;
 		}
+		if(BeanImpl.class.isInstance(obj)) {
+			return (BeanImpl) obj;
+		}
+		if(Bean.class.isInstance(obj) && Proxy.isProxyClass(obj.getClass())) {
+			return (BeanImpl) Proxy.getInvocationHandler(obj);
+		}
+		return null;
 	}
 
 	static boolean isGetterMethod(Method method) {
@@ -69,4 +101,7 @@ final class BeanUtil {
 				"Methodname " + methodName + " is no valid bean method (Getter- or Settermethod)");
 	}
 
+	static boolean isPrimitiveType(Class<?> typeClass) {
+		return primitiveTypes.contains(typeClass);
+	}
 }

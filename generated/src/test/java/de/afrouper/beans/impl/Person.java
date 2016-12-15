@@ -22,4 +22,8 @@ public interface Person extends Bean {
 	BeanList<Person> getChilds();
 
 	void setChilds(BeanList<Person> childs);
+
+	default String nameAge() {
+		return getName() + " is " + getAge();
+	}
 }
