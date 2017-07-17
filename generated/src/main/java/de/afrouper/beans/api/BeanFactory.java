@@ -64,4 +64,12 @@ public final class BeanFactory {
 		}
 		return list;
 	}
+
+	public static <B extends Bean> BeanSet<B> createBeanSet(Class<B> elementType, B... elements) {
+		BeanSet<B> set = delegate.createBeanSet(elementType);
+		for (B element : elements) {
+			set.add(element);
+		}
+		return set;
+	}
 }

@@ -54,6 +54,16 @@ public class SimpleBeanVisitor implements BeanVisitor {
 		path.pop();
 	}
 
+	@Override
+	public void setStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations) {
+
+	}
+
+	@Override
+	public void setEnd(String name) {
+
+	}
+
 	private String createName(String leaf) {
 		if (path.isEmpty()) {
 			return leaf;

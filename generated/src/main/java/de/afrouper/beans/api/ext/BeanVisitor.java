@@ -17,4 +17,8 @@ public interface BeanVisitor {
 	void listIndex(int index);
 
 	void listEnd(String name);
+
+	void setStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations);
+
+	void setEnd(String name);
 }

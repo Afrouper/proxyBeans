@@ -1,10 +1,11 @@
 package de.afrouper.beans.impl;
 
-import java.lang.reflect.Proxy;
-
 import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.BeanFactoryDelegate;
 import de.afrouper.beans.api.BeanList;
+import de.afrouper.beans.api.BeanSet;
+
+import java.lang.reflect.Proxy;
 
 public final class BeanFactoryDelegateImpl implements BeanFactoryDelegate {
 
@@ -22,6 +23,12 @@ public final class BeanFactoryDelegateImpl implements BeanFactoryDelegate {
 	public <E extends Bean> BeanList<E> createBeanList(Class<E> elementType) {
 		BeanDescription description = BeanScanner.get().getBeanDescription(elementType);
 		return new DelegatingList<>(elementType, description);
+	}
+
+	@Override
+	public <B extends Bean> BeanSet<B> createBeanSet(Class<B> elementType) {
+		BeanDescription description = BeanScanner.get().getBeanDescription(elementType);
+		return new DelegatingSet<>(elementType, description);
 	}
 
 	private static ClassLoader getClassloader() {
