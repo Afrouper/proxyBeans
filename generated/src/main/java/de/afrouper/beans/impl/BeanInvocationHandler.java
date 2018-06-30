@@ -5,11 +5,14 @@ import de.afrouper.beans.api.ext.BeanAccess;
 import de.afrouper.beans.api.ext.BeanVisitor;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 class BeanInvocationHandler extends AbstractInvocationHandler implements BeanImpl, BeanAccess {
+
+	private static final boolean isJava8 = System.getProperty("java.version").startsWith("1.8");
 
 	private final Map<String, BeanValue> values;
 
@@ -117,24 +120,21 @@ class BeanInvocationHandler extends AbstractInvocationHandler implements BeanImp
 			return getValue(BeanUtil.getPropertyNameFromMethodName(methodName)).getValue();
 		} else if (method.isDefault()) {
 			final Class<?> declaringClass = method.getDeclaringClass();
-			final MethodHandles.Lookup lookup = MethodHandles.publicLookup()
-					.in(declaringClass);
-
-			final Field f = MethodHandles.Lookup.class.getDeclaredField("allowedModes");
-			final int modifiers = f.getModifiers();
-			if (Modifier.isFinal(modifiers)) {
-				//TODO: DO if-block only once!
-				final Field modifiersField = Field.class.getDeclaredField("modifiers");
-				modifiersField.setAccessible(true);
-				modifiersField.setInt(f, modifiers & ~Modifier.FINAL);
-				f.setAccessible(true);
-				f.set(lookup, MethodHandles.Lookup.PRIVATE);
+			if(isJava8) {
+				Constructor<MethodHandles.Lookup> constructor = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class);
+				constructor.setAccessible(true);
+				return constructor.newInstance(declaringClass)
+						.in(declaringClass)
+						.unreflectSpecial(method, declaringClass)
+						.bindTo(proxy)
+						.invokeWithArguments(args);
 			}
-
-			return lookup
-					.unreflectSpecial(method, declaringClass)
-					.bindTo(proxy)
-					.invokeWithArguments(args);
+			else {
+				return MethodHandles.lookup()
+						.findSpecial(declaringClass, methodName, MethodType.methodType(method.getReturnType(), method.getParameterTypes()), declaringClass)
+						.bindTo(proxy)
+						.invokeWithArguments(args);
+			}
 		}
 		throw new IllegalArgumentException("Method " + methodName + " cannot be invoked.");
 	}

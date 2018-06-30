@@ -1,1 +1,1 @@
-include ":generated"
+include 'generated'
