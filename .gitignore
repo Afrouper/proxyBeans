@@ -10,6 +10,12 @@ gradlew.bat
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
+#build folders
+**/build/
+**/bin/
+**/.classpath
+**/out/
+
 # Package Files #
 *.jar
 *.war
