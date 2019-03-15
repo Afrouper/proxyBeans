@@ -19,7 +19,6 @@ public final class BeanFactoryDelegateImpl implements BeanFactoryDelegate {
 				new BeanInvocationHandler(description));
 	}
 
-	@SuppressWarnings("unchecked")
 	public <E extends Bean> BeanList<E> createBeanList(Class<E> elementType) {
 		BeanDescription description = BeanScanner.get().getBeanDescription(elementType);
 		return new DelegatingList<>(elementType, description);

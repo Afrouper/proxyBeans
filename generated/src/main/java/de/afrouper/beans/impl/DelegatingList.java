@@ -14,11 +14,8 @@ final class DelegatingList<E extends Bean> implements BeanList<E>, BeanImpl<E>, 
 
     private final Class<E> elementType;
 
-    private final BeanDescription description;
-
     DelegatingList(Class<E> elementType, BeanDescription description) {
         this.elementType = elementType;
-        this.description = description;
         list = new ArrayList<>();
     }
 

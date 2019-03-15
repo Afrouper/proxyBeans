@@ -16,11 +16,8 @@ final class DelegatingSet<E extends Bean> implements BeanSet<E>, BeanImpl<E>, Se
 
     private final Class<E> elementType;
 
-    private final BeanDescription description;
-
     DelegatingSet(Class<E> elementType, BeanDescription description) {
         this.elementType = elementType;
-        this.description = description;
         set = new HashSet<>();
     }
 
@@ -164,8 +161,7 @@ final class DelegatingSet<E extends Bean> implements BeanSet<E>, BeanImpl<E>, Se
 
 		@Override
 		public E next() {
-			E next = iter.next();
-			return next;
+			return iter.next();
 		}
 
 		@Override

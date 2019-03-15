@@ -1,0 +1,7 @@
+group = 'de.afrouper.beans.generated'
+version = '0.1'
+
+
+dependencies {
+	implementation 'junit:junit:4.12'
+}

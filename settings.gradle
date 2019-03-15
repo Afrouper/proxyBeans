@@ -1,1 +1,3 @@
+rootProject.name = 'beans'
+
 include 'generated'

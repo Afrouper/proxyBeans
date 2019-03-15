@@ -4,6 +4,7 @@ import de.afrouper.beans.api.ext.BeanAccess;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
@@ -59,16 +60,16 @@ public final class BeanFactory {
 	 */
 	public static <B extends Bean> BeanList<B> createBeanList(Class<B> elementType, B... elements) {
 		BeanList<B> list = delegate.createBeanList(elementType);
-		for (B element : elements) {
-			list.add(element);
+		if(elements != null) {
+			list.addAll(Arrays.asList(elements));
 		}
 		return list;
 	}
 
 	public static <B extends Bean> BeanSet<B> createBeanSet(Class<B> elementType, B... elements) {
 		BeanSet<B> set = delegate.createBeanSet(elementType);
-		for (B element : elements) {
-			set.add(element);
+		if(elements != null) {
+			set.addAll(Arrays.asList(elements));
 		}
 		return set;
 	}

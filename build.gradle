@@ -1,19 +1,12 @@
 allprojects {
-	
+    repositories {
+        mavenCentral()
+    }
 }
 
 subprojects {
-	apply plugin: 'java'
-	group = 'de.afrouper.beans'
-	version = '0.1'
-	repositories {
-		mavenCentral()
-	}
+    apply plugin: 'java'
 
-	dependencies {        
-		testCompile 'junit:junit:4+'
-	}
-}
-
-project(':generated') {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 }
