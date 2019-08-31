@@ -1,8 +1,9 @@
 package de.afrouper.beans.impl;
 
 import de.afrouper.beans.api.BeanFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EqualityTest {
 
@@ -10,15 +11,15 @@ public class EqualityTest {
 	public void depth1() {
 		Person person1 = BeanFactory.createBean(Person.class);
 		Person person2 = BeanFactory.createBean(Person.class);
-		Assert.assertEquals(person1, person2);
-		Assert.assertEquals(person1.hashCode(), person2.hashCode());
+		assertEquals(person1, person2);
+		assertEquals(person1.hashCode(), person2.hashCode());
 
 		person1.setName("Test");
-		Assert.assertNotEquals(person1, person2);
-		Assert.assertNotEquals(person1.hashCode(), person2.hashCode());
+		assertNotEquals(person1, person2);
+		assertNotEquals(person1.hashCode(), person2.hashCode());
 
 		person2.setName("Test");
-		Assert.assertEquals(person1, person2);
-		Assert.assertEquals(person1.hashCode(), person2.hashCode());
+		assertEquals(person1, person2);
+		assertEquals(person1.hashCode(), person2.hashCode());
 	}
 }

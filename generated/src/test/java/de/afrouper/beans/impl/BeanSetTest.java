@@ -2,8 +2,9 @@ package de.afrouper.beans.impl;
 
 import de.afrouper.beans.api.BeanFactory;
 import de.afrouper.beans.api.BeanSet;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Iterator;
 
@@ -14,12 +15,12 @@ public class BeanSetTest {
 	@Test
 	public void simpleSet() {
 		BeanSet<Person> persons = createPersonsSet();
-		Assert.assertEquals(MAX, persons.size());
+		assertEquals(MAX, persons.size());
 
 		Iterator<Person> iterator = persons.iterator();
 		for (int i = 0; i < MAX; ++i) {
 			Person person = iterator.next();
-			Assert.assertTrue(persons.contains(person));
+			assertTrue(persons.contains(person));
 		}
 	}
 
@@ -38,11 +39,11 @@ public class BeanSetTest {
 		p3.setAge(15);
 
 		BeanSet<Person> persons = BeanFactory.createBeanSet(Person.class, p1, p2, p3);
-		Assert.assertEquals(2, persons.size());
+		assertEquals(2, persons.size());
 
-		Assert.assertFalse(persons.add(p2));
-		Assert.assertFalse(persons.add(p3));
-		Assert.assertEquals(2, persons.size());
+		assertFalse(persons.add(p2));
+		assertFalse(persons.add(p3));
+		assertEquals(2, persons.size());
 	}
 
 	@Test
@@ -60,17 +61,17 @@ public class BeanSetTest {
 		p3.setAge(15);
 
 		BeanSet<Person> persons = BeanFactory.createBeanSet(Person.class, p1, p2, p3);
-		Assert.assertEquals(2, persons.size());
+		assertEquals(2, persons.size());
 
-		Assert.assertTrue(persons.remove(p1));
-		Assert.assertFalse(persons.remove(p2));
-		Assert.assertTrue(persons.remove(p3));
-		Assert.assertEquals(0, persons.size());
+		assertTrue(persons.remove(p1));
+		assertFalse(persons.remove(p2));
+		assertTrue(persons.remove(p3));
+		assertEquals(0, persons.size());
 	}
 
 	private BeanSet<Person> createPersonsSet() {
 		BeanSet<Person> persons = BeanFactory.createBeanSet(Person.class);
-		Assert.assertNotNull(persons);
+		assertNotNull(persons);
 
 		for (int i = 0; i < MAX; ++i) {
 			Person person = BeanFactory.createBean(Person.class);

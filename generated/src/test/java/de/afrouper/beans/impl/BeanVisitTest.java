@@ -4,8 +4,8 @@ import de.afrouper.beans.api.BeanFactory;
 import de.afrouper.beans.api.ext.BeanAccess;
 import de.afrouper.beans.api.ext.PropertyInformation;
 import de.afrouper.beans.api.ext.SimpleBeanVisitor;
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
@@ -17,21 +17,21 @@ public class BeanVisitTest {
 		person.setName("Lutz");
 
 		BeanAccess<Person> beanAccess = BeanFactory.getBeanAccess(person);
-		Assert.assertNotNull(beanAccess);
+		assertNotNull(beanAccess);
 		SimpleBeanVisitor visitor = new SimpleBeanVisitor();
 		beanAccess.visit(visitor, true);
 
 		Map<String, PropertyInformation> map = visitor.getInformationMap();
-		Assert.assertEquals(1, map.size());
+		assertEquals(1, map.size());
 		PropertyInformation propertyInformation = map.get("name");
-		Assert.assertNotNull(propertyInformation);
-		Assert.assertEquals("name", propertyInformation.getName());
-		Assert.assertEquals(String.class, propertyInformation.getType());
+		assertNotNull(propertyInformation);
+		assertEquals("name", propertyInformation.getName());
+		assertEquals(String.class, propertyInformation.getType());
 
 		beanAccess.resetTrackedChanges();
 		visitor = new SimpleBeanVisitor();
 		beanAccess.visit(visitor, true);
-		Assert.assertEquals(0, visitor.getInformationMap().size());
+		assertEquals(0, visitor.getInformationMap().size());
 	}
 
 	@Test
@@ -42,18 +42,18 @@ public class BeanVisitTest {
 		person.getPartner().setName("Helga");
 
 		BeanAccess<Person> beanAccess = BeanFactory.getBeanAccess(person);
-		Assert.assertNotNull(beanAccess);
+		assertNotNull(beanAccess);
 		SimpleBeanVisitor visitor = new SimpleBeanVisitor();
 		beanAccess.visit(visitor, false);
 
-		Assert.assertEquals(2, visitor.getInformationMap().size());
-		Assert.assertEquals("Lutz", visitor.getInformationMap().get("name").getValue());
-		Assert.assertEquals("Helga", visitor.getInformationMap().get("partner.name").getValue());
+		assertEquals(2, visitor.getInformationMap().size());
+		assertEquals("Lutz", visitor.getInformationMap().get("name").getValue());
+		assertEquals("Helga", visitor.getInformationMap().get("partner.name").getValue());
 
 		beanAccess.resetTrackedChanges();
 		visitor = new SimpleBeanVisitor();
 		beanAccess.visit(visitor, false);
-		Assert.assertEquals(2, visitor.getInformationMap().size());
+		assertEquals(2, visitor.getInformationMap().size());
 	}
 
 	@Test
@@ -69,8 +69,8 @@ public class BeanVisitTest {
 		SimpleBeanVisitor visitor = new SimpleBeanVisitor();
 		beanAccess.visit(visitor, false);
 
-		Assert.assertEquals(2, visitor.getInformationMap().size());
-		Assert.assertEquals("Luke", visitor.getInformationMap().get("childs[0].name").getValue());
-		Assert.assertEquals("Leia", visitor.getInformationMap().get("childs[1].name").getValue());
+		assertEquals(2, visitor.getInformationMap().size());
+		assertEquals("Luke", visitor.getInformationMap().get("childs[0].name").getValue());
+		assertEquals("Leia", visitor.getInformationMap().get("childs[1].name").getValue());
 	}
 }

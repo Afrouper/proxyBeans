@@ -1,10 +1,11 @@
 package de.afrouper.beans.impl;
 
 import de.afrouper.beans.api.BeanFactory;
-import org.junit.Assert;
-import org.junit.Test;
 
 import de.afrouper.beans.api.BeanList;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BeanListTest {
 
@@ -13,12 +14,12 @@ public class BeanListTest {
 	@Test
 	public void simpleList() {
 		BeanList<Person> persons = createPersonsList();
-		Assert.assertEquals(MAX, persons.size());
+		assertEquals(MAX, persons.size());
 
 		for (int i = 0; i < MAX; ++i) {
 			Person person = persons.get(i);
-			Assert.assertEquals(i, person.getAge().intValue());
-			Assert.assertEquals("Name_" + (i + 1), person.getName());
+			assertEquals(i, person.getAge().intValue());
+			assertEquals("Name_" + (i + 1), person.getName());
 		}
 	}
 
@@ -27,13 +28,13 @@ public class BeanListTest {
 		Person person = BeanFactory.createBean(Person.class);
 		person.setChilds(createPersonsList());
 
-		Assert.assertNotNull(person.getChilds());
-		Assert.assertEquals(MAX, person.getChilds().size());
+		assertNotNull(person.getChilds());
+		assertEquals(MAX, person.getChilds().size());
 	}
 
 	private BeanList<Person> createPersonsList() {
 		BeanList<Person> persons = BeanFactory.createBeanList(Person.class);
-		Assert.assertNotNull(persons);
+		assertNotNull(persons);
 
 		for (int i = 0; i < MAX; ++i) {
 			Person person = BeanFactory.createBean(Person.class);
