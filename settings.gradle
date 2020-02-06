@@ -1,3 +1,4 @@
 rootProject.name = 'proxyBeans'
 
 include 'beanImpl'
+include 'jsonSerializer'

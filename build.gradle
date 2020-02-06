@@ -7,6 +7,9 @@ allprojects {
 subprojects {
     apply plugin: 'java'
 
+    group = 'de.afrouper.beans'
+    version = '0.5'
+
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 }
