@@ -22,20 +22,31 @@ class ProxyBeanJsonSerializerTest {
     }
 
     @Test
-    public void serialize() {
-        SimpleJsonTestBean bean = BeanFactory.createBean(SimpleJsonTestBean.class);
-        bean.setAge(42);
-        bean.setName("Foo");
-        bean.setChild(false);
-
-        PlainBean plainBean = new PlainBean();
-        plainBean.setName("FooBar");
-
-        String s = gson.toJson(plainBean);
-        System.out.println(s);
+    public void simpleBean() {
+        SimpleJsonTestBean bean = createSimpleBean();
 
         String json = gson.toJson(bean);
         System.out.println(json);
         assertNotNull(json);
+    }
+
+    @Test
+    public void complexBean() {
+        ComplexJsonTestBean bean = BeanFactory.createBean(ComplexJsonTestBean.class);
+        SimpleJsonTestBean simpleBean = createSimpleBean();
+        bean.setId("ID_42");
+        bean.setSimpleBean(simpleBean);
+
+        String json = gson.toJson(bean);
+        System.out.println(json);
+        assertNotNull(json);
+    }
+
+    private SimpleJsonTestBean createSimpleBean() {
+        SimpleJsonTestBean bean = BeanFactory.createBean(SimpleJsonTestBean.class);
+        bean.setAge(42);
+        bean.setName("Foo");
+        bean.setChild(false);
+        return bean;
     }
 }

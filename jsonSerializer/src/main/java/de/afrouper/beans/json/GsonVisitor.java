@@ -6,10 +6,13 @@ import de.afrouper.beans.api.ext.BeanVisitor;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.util.Stack;
 
 class GsonVisitor implements BeanVisitor {
 
     private final JsonWriter writer;
+
+    private final Stack<BeanStackElement> beanStack = new Stack<>();
 
     public GsonVisitor(JsonWriter writer) {
         this.writer = writer;
@@ -59,11 +62,25 @@ class GsonVisitor implements BeanVisitor {
 
     @Override
     public void beanStart(String name, Class<? extends Bean> beanClass, Annotation[] annotations) {
+        try {
+            writer.name(name).beginObject();
+            beanStack.push(new BeanStackElement(name, beanClass, annotations));
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
     public void beanEnd(String name) {
-
+        try {
+            BeanStackElement element = beanStack.pop();
+            if(!name.equals(element.getName())) {
+                throw new IllegalArgumentException("Invalid Beanstack. Expected bean " + element.getName() + ", got " + name);
+            }
+            writer.endObject();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
@@ -89,5 +106,21 @@ class GsonVisitor implements BeanVisitor {
     @Override
     public void setEnd(String name) {
 
+    }
+
+    private class BeanStackElement{
+        private String name;
+        Class<? extends Bean> beanClass;
+        private Annotation[] annotations;
+
+        public BeanStackElement(String name, Class<? extends Bean> beanClass, Annotation[] annotations) {
+            this.name = name;
+            this.beanClass = beanClass;
+            this.annotations = annotations;
+        }
+
+        public String getName() {
+            return name;
+        }
     }
 }
