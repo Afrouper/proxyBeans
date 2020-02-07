@@ -5,8 +5,16 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapterFactory;
 import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.BeanFactory;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
+
+import java.io.File;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -22,24 +30,22 @@ class ProxyBeanJsonSerializerTest {
     }
 
     @Test
-    public void simpleBean() {
+    public void simpleBean() throws Exception {
         SimpleJsonTestBean bean = createSimpleBean();
 
         String json = gson.toJson(bean);
-        System.out.println(json);
-        assertNotNull(json);
+
+        JSONAssert.assertEquals(readExpectedJson("simpleJsonTestBean.json"), json, JSONCompareMode.STRICT);
     }
 
     @Test
-    public void complexBean() {
+    public void complexBean() throws Exception {
         ComplexJsonTestBean bean = BeanFactory.createBean(ComplexJsonTestBean.class);
-        SimpleJsonTestBean simpleBean = createSimpleBean();
         bean.setId("ID_42");
-        bean.setSimpleBean(simpleBean);
+        bean.setSimpleBean(createSimpleBean());
 
         String json = gson.toJson(bean);
-        System.out.println(json);
-        assertNotNull(json);
+        JSONAssert.assertEquals(readExpectedJson("complexJsonTestBean.json"), json, JSONCompareMode.STRICT);
     }
 
     private SimpleJsonTestBean createSimpleBean() {
@@ -48,5 +54,10 @@ class ProxyBeanJsonSerializerTest {
         bean.setName("Foo");
         bean.setChild(false);
         return bean;
+    }
+
+    private String readExpectedJson(String name) throws Exception {
+        final String path = "/" + getClass().getPackage().getName().replace('.', '/');
+        return FileUtils.readFileToString(new File(getClass().getResource(path + "/" + name).toURI()), StandardCharsets.UTF_8);
     }
 }

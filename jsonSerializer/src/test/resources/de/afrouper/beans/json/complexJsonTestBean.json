@@ -1,0 +1,8 @@
+{
+  "simpleBean": {
+    "name":"Foo",
+    "age":42,
+    "child":false
+  },
+  "id":"ID_42"
+}
