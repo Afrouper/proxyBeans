@@ -35,15 +35,20 @@ public class SimpleBeanVisitor implements BeanVisitor {
 	}
 
 	@Override
-	public void listStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations) {
-		path.push(new StackElement(name, true));
-	}
-
-	public void listIndex(int index) {
+	public void beanStartInArray(int index, Class<? extends Bean> beanClass, Annotation[] annotations) {
 		if(path.isEmpty() || !path.peek().isList()) {
 			throw new IllegalStateException("Stack corrupt. Listindex should be set an path is empty or no list element");
 		}
 		path.peek().setIndex(index);
+	}
+
+	@Override
+	public void beanEndInArray(int index) {
+	}
+
+	@Override
+	public void listStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations) {
+		path.push(new StackElement(name, true));
 	}
 
 	@Override

@@ -43,9 +43,10 @@ final class DelegatingList<E extends Bean> implements BeanList<E>, BeanImpl<E>, 
     public void visit(BeanVisitor visitor, boolean onlyChangedProperties) {
         //TODO: Implement change tracking
 		for (int i = 0; i < list.size(); i++) {
-			visitor.listIndex(i);
 			BeanImpl beanImpl = BeanUtil.getBeanImpl(list.get(i));
+			visitor.beanStartInArray(i, getElementType(), null);
 			beanImpl.visit(visitor, onlyChangedProperties);
+			visitor.beanEndInArray(i);
 		}
 	}
 

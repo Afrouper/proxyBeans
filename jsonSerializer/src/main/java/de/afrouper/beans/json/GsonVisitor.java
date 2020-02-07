@@ -63,8 +63,8 @@ class GsonVisitor implements BeanVisitor {
     @Override
     public void beanStart(String name, Class<? extends Bean> beanClass, Annotation[] annotations) {
         try {
+            beanStack.push(new BeanStackElement(name, beanClass, Type.OBJECT, annotations));
             writer.name(name).beginObject();
-            beanStack.push(new BeanStackElement(name, beanClass, annotations));
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -74,7 +74,7 @@ class GsonVisitor implements BeanVisitor {
     public void beanEnd(String name) {
         try {
             BeanStackElement element = beanStack.pop();
-            if(!name.equals(element.getName())) {
+            if(!Type.OBJECT.equals(element.getType()) && !name.equals(element.getName())) {
                 throw new IllegalArgumentException("Invalid Beanstack. Expected bean " + element.getName() + ", got " + name);
             }
             writer.endObject();
@@ -86,15 +86,34 @@ class GsonVisitor implements BeanVisitor {
     @Override
     public void listStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations) {
         try {
+            beanStack.push(new BeanStackElement(name, elementClass, Type.LIST, annotations));
             writer.name(name).beginArray();
-            beanStack.push(new BeanStackElement(name, elementClass, annotations));
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
     }
 
     @Override
-    public void listIndex(int index) {
+    public void beanStartInArray(int index, Class<? extends Bean> beanClass, Annotation[] annotations) {
+        try {
+            beanStack.push(new BeanStackElement(index, beanClass, Type.LIST_OBJECT, annotations));
+            writer.beginObject();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    @Override
+    public void beanEndInArray(int index) {
+        try {
+            BeanStackElement stackElement = beanStack.pop();
+            if(!Type.LIST_OBJECT.equals(stackElement.getType()) && index != stackElement.getIndex()) {
+                throw new IllegalArgumentException("Invalid Beanstack. Expected list object for index " + stackElement.getIndex() + ", got " + index);
+            }
+            writer.endObject();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
@@ -102,9 +121,9 @@ class GsonVisitor implements BeanVisitor {
         try {
             BeanStackElement element = beanStack.pop();
             if(!name.equals(element.getName())) {
-                throw new IllegalArgumentException("Invalid Beanstack. Expected bean " + element.getName() + ", got " + name);
+                throw new IllegalArgumentException("Invalid Beanstack. Expected list " + element.getName() + ", got " + name);
             }
-            writer.endObject();
+            writer.endArray();
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -122,17 +141,41 @@ class GsonVisitor implements BeanVisitor {
 
     private class BeanStackElement{
         private String name;
-        Class<? extends Bean> beanClass;
-        private Annotation[] annotations;
+        private int index;
+        private final Class<? extends Bean> beanClass;
+        private final Annotation[] annotations;
+        private final Type type;
 
-        public BeanStackElement(String name, Class<? extends Bean> beanClass, Annotation[] annotations) {
-            this.name = name;
+        private BeanStackElement(Class<? extends Bean> beanClass, Type type, Annotation[] annotations) {
             this.beanClass = beanClass;
+            this.type = type;
             this.annotations = annotations;
+        }
+
+        public BeanStackElement(String name, Class<? extends Bean> beanClass, Type type, Annotation[] annotations) {
+            this(beanClass, type, annotations);
+            this.name = name;
+        }
+
+        public BeanStackElement(int index, Class<? extends Bean> beanClass, Type type, Annotation[] annotations) {
+            this(beanClass, type, annotations);
+            this.index = index;
         }
 
         public String getName() {
             return name;
         }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public Type getType() {
+            return type;
+        }
+    }
+
+    private enum Type {
+        OBJECT, LIST, LIST_OBJECT, SET;
     }
 }

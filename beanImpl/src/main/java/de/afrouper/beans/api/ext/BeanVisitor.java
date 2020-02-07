@@ -14,7 +14,9 @@ public interface BeanVisitor {
 
 	void listStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations);
 
-	void listIndex(int index);
+	void beanStartInArray(int index, Class<? extends Bean> beanClass, Annotation[] annotations);
+
+	void beanEndInArray(int index);
 
 	void listEnd(String name);
 

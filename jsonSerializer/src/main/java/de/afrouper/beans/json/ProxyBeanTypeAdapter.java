@@ -14,7 +14,6 @@ class ProxyBeanTypeAdapter extends TypeAdapter<Bean> {
     @Override
     public void write(JsonWriter out, Bean value) throws IOException {
         BeanAccess<Bean> beanAccess = BeanFactory.getBeanAccess(value);
-
         try {
             out.beginObject();
             beanAccess.visit(new GsonVisitor(out), false);
@@ -22,7 +21,6 @@ class ProxyBeanTypeAdapter extends TypeAdapter<Bean> {
         finally {
             out.endObject();
         }
-
         beanAccess.resetTrackedChanges();
     }
 

@@ -60,7 +60,7 @@ class ProxyBeanJsonSerializerTest {
         listBean.setList(list);
 
         final String json = gson.toJson(listBean);
-        System.out.println(json);
+        JSONAssert.assertEquals(readExpectedJson("listBean.json"), json, JSONCompareMode.STRICT);
     }
 
     private SimpleJsonTestBean createSimpleBean() {
