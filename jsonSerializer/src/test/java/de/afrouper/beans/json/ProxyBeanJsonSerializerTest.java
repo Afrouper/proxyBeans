@@ -53,7 +53,9 @@ class ProxyBeanJsonSerializerTest {
         final ListBean listBean = BeanFactory.createBean(ListBean.class);
         List<SimpleJsonTestBean> list = BeanFactory.createBeanList(SimpleJsonTestBean.class);
         for(int i = 0; i < 10; ++i) {
-            list.add(createSimpleBean_small());
+            final SimpleJsonTestBean bean = createSimpleBean_small();
+            bean.setName(bean.getName() + "_" + i);
+            list.add(bean);
         }
         listBean.setList(list);
 
