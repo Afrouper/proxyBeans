@@ -15,6 +15,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -34,7 +35,6 @@ class ProxyBeanJsonSerializerTest {
         SimpleJsonTestBean bean = createSimpleBean();
 
         String json = gson.toJson(bean);
-
         JSONAssert.assertEquals(readExpectedJson("simpleJsonTestBean.json"), json, JSONCompareMode.STRICT);
     }
 
@@ -45,8 +45,20 @@ class ProxyBeanJsonSerializerTest {
         bean.setSimpleBean(createSimpleBean());
 
         String json = gson.toJson(bean);
-        System.out.println(json);
         JSONAssert.assertEquals(readExpectedJson("complexJsonTestBean.json"), json, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void listBean() throws Exception {
+        final ListBean listBean = BeanFactory.createBean(ListBean.class);
+        List<SimpleJsonTestBean> list = BeanFactory.createBeanList(SimpleJsonTestBean.class);
+        for(int i = 0; i < 10; ++i) {
+            list.add(createSimpleBean_small());
+        }
+        listBean.setList(list);
+
+        final String json = gson.toJson(listBean);
+        System.out.println(json);
     }
 
     private SimpleJsonTestBean createSimpleBean() {
@@ -57,6 +69,12 @@ class ProxyBeanJsonSerializerTest {
         bean.setGender('M');
         bean.setHight(200);
         bean.setWidth(38.45);
+        return bean;
+    }
+
+    private SimpleJsonTestBean createSimpleBean_small() {
+        SimpleJsonTestBean bean = BeanFactory.createBean(SimpleJsonTestBean.class);
+        bean.setName("Lutz");
         return bean;
     }
 

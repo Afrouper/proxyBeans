@@ -85,17 +85,29 @@ class GsonVisitor implements BeanVisitor {
 
     @Override
     public void listStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations) {
-
+        try {
+            writer.name(name).beginArray();
+            beanStack.push(new BeanStackElement(name, elementClass, annotations));
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
     public void listIndex(int index) {
-
     }
 
     @Override
     public void listEnd(String name) {
-
+        try {
+            BeanStackElement element = beanStack.pop();
+            if(!name.equals(element.getName())) {
+                throw new IllegalArgumentException("Invalid Beanstack. Expected bean " + element.getName() + ", got " + name);
+            }
+            writer.endObject();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Override
