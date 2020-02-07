@@ -46,7 +46,7 @@ class GsonVisitor implements BeanVisitor {
                 writer.name(name).value((float) value);
             }
             else if(char.class.isAssignableFrom(type)) {
-                writer.name(name).value((char) value);
+                writer.name(name).value(Character.toString((Character) value));
             }
             else if(Character.class.isAssignableFrom(type)) {
                 writer.name(name).value((Character) value);

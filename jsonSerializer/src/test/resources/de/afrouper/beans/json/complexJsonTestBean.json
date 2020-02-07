@@ -2,7 +2,10 @@
   "simpleBean": {
     "name":"Foo",
     "age":42,
-    "child":false
+    "child":false,
+    "gender": "M",
+    "hight": 200,
+    "width": 38.45
   },
   "id":"ID_42"
 }

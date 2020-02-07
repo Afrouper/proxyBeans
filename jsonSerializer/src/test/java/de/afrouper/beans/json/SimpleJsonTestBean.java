@@ -12,4 +12,13 @@ public interface SimpleJsonTestBean extends Bean {
 
     boolean isChild();
     void setChild(boolean child);
+
+    char getGender();
+    void setGender(char gender);
+
+    long getHight();
+    void setHight(long hight);
+
+    double getWidth();
+    void setWidth(double width);
 }

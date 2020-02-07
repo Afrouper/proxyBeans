@@ -45,6 +45,7 @@ class ProxyBeanJsonSerializerTest {
         bean.setSimpleBean(createSimpleBean());
 
         String json = gson.toJson(bean);
+        System.out.println(json);
         JSONAssert.assertEquals(readExpectedJson("complexJsonTestBean.json"), json, JSONCompareMode.STRICT);
     }
 
@@ -53,6 +54,9 @@ class ProxyBeanJsonSerializerTest {
         bean.setAge(42);
         bean.setName("Foo");
         bean.setChild(false);
+        bean.setGender('M');
+        bean.setHight(200);
+        bean.setWidth(38.45);
         return bean;
     }
 
