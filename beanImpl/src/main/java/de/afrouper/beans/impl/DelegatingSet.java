@@ -39,11 +39,16 @@ final class DelegatingSet<E extends Bean> implements BeanSet<E>, BeanImpl<E>, Se
 
     @Override
     public void visit(BeanVisitor visitor, boolean onlyChangedProperties) {
-        //TODO: Implement change tracking
-        set.stream().forEachOrdered(e -> {
-			BeanImpl beanImpl = BeanUtil.getBeanImpl(e);
+		//TODO: Implement change tracking
+		int index = 0;
+		Iterator<?> iter = set.iterator();
+		while(iter.hasNext()) {
+			index++;
+			BeanImpl beanImpl = BeanUtil.getBeanImpl(iter.next());
+			visitor.beanStartInArray(index, getElementType(), null);
 			beanImpl.visit(visitor, onlyChangedProperties);
-        });
+			visitor.beanEndInArray(index);
+		}
 	}
 
     @Override

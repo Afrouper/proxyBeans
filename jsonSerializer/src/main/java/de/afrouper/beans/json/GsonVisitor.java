@@ -85,12 +85,22 @@ class GsonVisitor implements BeanVisitor {
 
     @Override
     public void listStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations) {
-        try {
-            beanStack.push(new BeanStackElement(name, elementClass, Type.LIST, annotations));
-            writer.name(name).beginArray();
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+        arrayStart(name, elementClass, annotations, Type.LIST);
+    }
+
+    @Override
+    public void listEnd(String name) {
+        arrayEnd(name, Type.LIST);
+    }
+
+    @Override
+    public void setStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations) {
+        arrayStart(name, elementClass, annotations, Type.SET);
+    }
+
+    @Override
+    public void setEnd(String name) {
+        arrayEnd(name, Type.SET);
     }
 
     @Override
@@ -116,12 +126,23 @@ class GsonVisitor implements BeanVisitor {
         }
     }
 
-    @Override
-    public void listEnd(String name) {
+    private void arrayStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations, Type type) {
+        try {
+            beanStack.push(new BeanStackElement(name, elementClass, type, annotations));
+            writer.name(name).beginArray();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private void arrayEnd(String name, Type type) {
         try {
             BeanStackElement element = beanStack.pop();
             if(!name.equals(element.getName())) {
                 throw new IllegalArgumentException("Invalid Beanstack. Expected list " + element.getName() + ", got " + name);
+            }
+            if(!type.equals(element.getType())) {
+                throw new IllegalArgumentException("Invalid Beanstack. Expected type " + element.getType() + ", got " + type);
             }
             writer.endArray();
         } catch (IOException e) {
@@ -129,17 +150,7 @@ class GsonVisitor implements BeanVisitor {
         }
     }
 
-    @Override
-    public void setStart(String name, Class<? extends Bean> elementClass, Annotation[] annotations) {
-
-    }
-
-    @Override
-    public void setEnd(String name) {
-
-    }
-
-    private class BeanStackElement{
+    private static class BeanStackElement{
         private String name;
         private int index;
         private final Class<? extends Bean> beanClass;

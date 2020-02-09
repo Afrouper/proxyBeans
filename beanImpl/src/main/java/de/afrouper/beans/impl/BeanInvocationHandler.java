@@ -58,12 +58,21 @@ class BeanInvocationHandler extends AbstractInvocationHandler implements BeanImp
 						visitor.beanStart(propertyName, (Class<? extends Bean>) beanProperty.getType(), beanProperty.getAnnotations());
 						impl.visit(visitor, onlyChangedProperties);
 						visitor.beanEnd(propertyName);
-					} else {
-						//must be a list
+					}
+					else if(DelegatingList.class.isAssignableFrom(value.getValue().getClass())) {
 						DelegatingList list = (DelegatingList) value.getValue();
 						visitor.listStart(propertyName, list.getElementType(), beanProperty.getAnnotations());
 						impl.visit(visitor, onlyChangedProperties);
 						visitor.listEnd(propertyName);
+					}
+					else if(DelegatingSet.class.isAssignableFrom(value.getValue().getClass())) {
+						DelegatingSet set = (DelegatingSet) value.getValue();
+						visitor.setStart(propertyName, set.getElementType(), beanProperty.getAnnotations());
+						impl.visit(visitor, onlyChangedProperties);
+						visitor.setEnd(propertyName);
+					}
+					else {
+						throw new IllegalArgumentException("Invalid Bean value: " + value);
 					}
 				} else {
 					visitor.property(propertyName, value.getValue(), beanProperty.getType(), beanProperty.getAnnotations());

@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapterFactory;
 import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.BeanFactory;
+import de.afrouper.beans.api.BeanSet;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -61,6 +63,21 @@ class ProxyBeanJsonSerializerTest {
 
         final String json = gson.toJson(listBean);
         JSONAssert.assertEquals(readExpectedJson("listBean.json"), json, JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void setBean() throws Exception {
+        final SetBean setBean = BeanFactory.createBean(SetBean.class);
+        BeanSet<SimpleJsonTestBean> set = BeanFactory.createBeanSet(SimpleJsonTestBean.class);
+        for(int i = 0; i < 10; ++i) {
+            final SimpleJsonTestBean bean = createSimpleBean_small();
+            bean.setName(bean.getName() + "_" + i);
+            set.add(bean);
+        }
+        setBean.setSet(set);
+
+        final String json = gson.toJson(setBean);
+        JSONAssert.assertEquals(readExpectedJson("setBean.json"), json, JSONCompareMode.LENIENT);
     }
 
     private SimpleJsonTestBean createSimpleBean() {
