@@ -2,22 +2,14 @@ package de.afrouper.beans.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapterFactory;
-import de.afrouper.beans.api.Bean;
 import de.afrouper.beans.api.BeanFactory;
 import de.afrouper.beans.api.BeanSet;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-import java.io.File;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -37,7 +29,7 @@ class ProxyBeanJsonSerializerTest {
         SimpleJsonTestBean bean = createSimpleBean();
 
         String json = gson.toJson(bean);
-        JSONAssert.assertEquals(readExpectedJson("simpleJsonTestBean.json"), json, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(TestHelper.readJson("simpleJsonTestBean.json"), json, JSONCompareMode.STRICT);
     }
 
     @Test
@@ -47,7 +39,7 @@ class ProxyBeanJsonSerializerTest {
         bean.setSimpleBean(createSimpleBean());
 
         String json = gson.toJson(bean);
-        JSONAssert.assertEquals(readExpectedJson("complexJsonTestBean.json"), json, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(TestHelper.readJson("complexJsonTestBean.json"), json, JSONCompareMode.STRICT);
     }
 
     @Test
@@ -62,7 +54,7 @@ class ProxyBeanJsonSerializerTest {
         listBean.setList(list);
 
         final String json = gson.toJson(listBean);
-        JSONAssert.assertEquals(readExpectedJson("listBean.json"), json, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(TestHelper.readJson("listBean.json"), json, JSONCompareMode.STRICT);
     }
 
     @Test
@@ -77,7 +69,7 @@ class ProxyBeanJsonSerializerTest {
         setBean.setSet(set);
 
         final String json = gson.toJson(setBean);
-        JSONAssert.assertEquals(readExpectedJson("setBean.json"), json, JSONCompareMode.LENIENT);
+        JSONAssert.assertEquals(TestHelper.readJson("setBean.json"), json, JSONCompareMode.LENIENT);
     }
 
     private SimpleJsonTestBean createSimpleBean() {
@@ -95,10 +87,5 @@ class ProxyBeanJsonSerializerTest {
         SimpleJsonTestBean bean = BeanFactory.createBean(SimpleJsonTestBean.class);
         bean.setName("Lutz");
         return bean;
-    }
-
-    private String readExpectedJson(String name) throws Exception {
-        final String path = "/" + getClass().getPackage().getName().replace('.', '/');
-        return FileUtils.readFileToString(new File(getClass().getResource(path + "/" + name).toURI()), StandardCharsets.UTF_8);
     }
 }

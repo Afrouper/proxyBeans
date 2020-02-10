@@ -1,6 +1,7 @@
 package de.afrouper.beans.json;
 
 import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import de.afrouper.beans.api.Bean;
@@ -9,7 +10,13 @@ import de.afrouper.beans.api.ext.BeanAccess;
 
 import java.io.IOException;
 
-class ProxyBeanTypeAdapter extends TypeAdapter<Bean> {
+class ProxyBeanTypeAdapter<T> extends TypeAdapter<Bean> {
+
+    private TypeToken<T> type;
+
+    public ProxyBeanTypeAdapter(TypeToken<T> type) {
+        this.type = type;
+    }
 
     @Override
     public void write(JsonWriter out, Bean value) throws IOException {
@@ -26,6 +33,7 @@ class ProxyBeanTypeAdapter extends TypeAdapter<Bean> {
 
     @Override
     public Bean read(JsonReader in) throws IOException {
-        return null;
+        final GsonBeanReader reader = new GsonBeanReader();
+        return reader.read(type, in);
     }
 }
