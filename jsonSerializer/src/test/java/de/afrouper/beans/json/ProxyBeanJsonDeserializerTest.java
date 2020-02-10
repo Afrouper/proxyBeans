@@ -18,11 +18,18 @@ public class ProxyBeanJsonDeserializerTest {
     }
 
     @Test
-    public void read() throws Exception {
+    public void simpleRead() throws Exception {
         final String json = TestHelper.readJson("simpleJsonTestBean.json");
         final SimpleJsonTestBean bean = gson.fromJson(json, SimpleJsonTestBean.class);
         Assertions.assertNotNull(bean);
         System.out.println(bean);
+    }
 
+    @Test
+    public void complexRead() throws Exception {
+        String json = TestHelper.readJson("complexJsonTestBean.json");
+        ComplexJsonTestBean bean = gson.fromJson(json, ComplexJsonTestBean.class);
+        Assertions.assertNotNull(bean);
+        System.out.println(bean);
     }
 }
