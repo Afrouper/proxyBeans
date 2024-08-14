@@ -10,8 +10,10 @@ subprojects {
     group = 'de.afrouper.beans'
     version = '0.5'
 
-    sourceCompatibility = 11
-    targetCompatibility = 11
+    java {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
 
     dependencies {
         testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
