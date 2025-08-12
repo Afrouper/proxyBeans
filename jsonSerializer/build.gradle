@@ -5,7 +5,7 @@ test {
 dependencies {
     implementation project(':beanImpl')
     implementation 'com.google.code.gson:gson:2.13.1'
-    implementation 'commons-io:commons-io:2.19.0'
+    implementation 'commons-io:commons-io:2.20.0'
 
     testImplementation 'org.skyscreamer:jsonassert:1.5.3'
 }
