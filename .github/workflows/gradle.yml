@@ -32,7 +32,7 @@ jobs:
         distribution: 'temurin'
 
     - name: Build with Gradle
-      uses: gradle/actions/setup-gradle@v6.2.0
+      uses: gradle/actions/setup-gradle@v6.3.0
 
     - name: Execute Gradle build
       run: ./gradlew build
